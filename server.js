@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3000;
 
 const db = require("./models");
+const { Workout } = require("./models");
 
 const app = express();
 
@@ -15,8 +16,19 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populatedb", { useNewUrlParser: true });
 
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
+    useNewUrlParser: true,
+    useFindAndModify: false
+});
+
+db.Workout.create()
+    .then(response => {
+        console.log(response);
+    })
+    .catch(({ message }) => {
+        console.log(message);
+    })
 // db.User.create({ name: "Ernest Hemingway" })
 //   .then(dbUser => {
 //     console.log(dbUser);
