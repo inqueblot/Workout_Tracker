@@ -7,7 +7,7 @@ const WorkoutSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    exercise: [
+    exercises: [
         {
             type: {
                 type: String,
@@ -42,17 +42,3 @@ const WorkoutSchema = new Schema({
 const Workout = mongoose.model("Workout", WorkoutSchema);
 
 module.exports = Workout;
-
-{
-    day: new Date().setDate(new Date().getDate() - 10),
-        exercises: [
-            {
-                type: "resistance",
-                name: "Bicep Curl",
-                duration: 20,
-                weight: 100,
-                reps: 10,
-                sets: 4
-            }
-        ]
-},
