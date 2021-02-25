@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3000;
 
 const db = require("./models");
-const { Workout } = require("./models");
 
 const app = express();
 
@@ -16,65 +15,69 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
+require("./routes/html-routes.js")(app);
+
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
     useNewUrlParser: true,
     useFindAndModify: false
 });
 
-db.Workout.create()
-    .then(response => {
-        console.log(response);
-    })
-    .catch(({ message }) => {
-        console.log(message);
-    })
-// db.User.create({ name: "Ernest Hemingway" })
-//   .then(dbUser => {
-//     console.log(dbUser);
-//   })
-//   .catch(({ message }) => {
-//     console.log(message);
-//   });
 
-// app.get("/notes", (req, res) => {
-//   db.Note.find({})
-//     .then(dbNote => {
-//       res.json(dbNote);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     });
-// });
+app.get("/api/workouts", (req, res) => {
+    db.Workout.find({})
+        .then(response => {
+            res.json(response);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+})
 
-// app.get("/user", (req, res) => {
-//   db.User.find({})
-//     .then(dbUser => {
-//       res.json(dbUser);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     });
-// });
+app.get("/api/workouts/range", (req, res) => {
+    db.Workout.find({})
+        .then(response => {
+            res.json(response);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+})
 
-// app.post("/submit", ({ body }, res) => {
-//   db.Note.create(body)
-//     .then(({ _id }) => db.User.findOneAndUpdate({}, { $push: { notes: _id } }, { new: true }))
-//     .then(dbUser => {
-//       res.json(dbUser);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     });
-// });
+app.put("/api/workouts/:id", (req, res) => {
+    console.log(req.body)
+    let id = req.params.id
+    db.Workout.findByIdAndUpdate(id, { $push: { exercises: req.body } }, { new: true })
+        .then(function (results) {
+            res.json(results);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+})
 
-// app.get("/populateduser", (req, res) => {
-//   // TODO
-//   // =====
-//   // Write the query to grab the documents from the User collection,
-//   // and populate them with any associated Notes.
-//   // TIP: Check the models out to see how the Notes refers to the User
-// });
+app.post("/api/workouts", (req, res) => {
+    console.log(req.body)
+    db.Workout.create(req.body)
+        .then(function (results) {
+            res.json(results);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+})
+
+app.get("/exercise", (req, res) => {
+
+    db.Workout.find({ _id: (req.query.id) })
+        .then(data => {
+
+            res.json(data);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+})
 
 // Start the server
 app.listen(PORT, () => {
